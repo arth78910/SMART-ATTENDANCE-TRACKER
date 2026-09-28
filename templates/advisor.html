@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block heading %}Attendance Advisor{% endblock %}
+
+{% block content %}
+
+<div class="advisor-page">
+
+    <div class="advisor-header">
+        <div>
+            <span class="page-label">SMART ATTENDANCE TOOL</span>
+            <h1>Attendance Advisor</h1>
+            <p>Check your attendance and see how many classes you can miss or need to attend.</p>
+        </div>
+
+        <div class="advisor-icon">🎯</div>
+    </div>
+
+    <div class="advisor-layout">
+
+        <div class="calculator-card">
+            <div class="calculator-header">
+                <div class="calculator-symbol">%</div>
+                <div>
+                    <h2>Calculate Attendance</h2>
+                    <p>Enter your current attendance details.</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('calculate_advisor') }}" class="advisor-form">
+
+                <div class="input-group">
+                    <label>Classes Present</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✓</span>
+                        <input type="number" name="present" min="0" placeholder="Example: 34" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Total Classes</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">#</span>
+                        <input type="number" name="total" min="1" placeholder="Example: 45" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Target Attendance</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">%</span>
+                        <input type="number" name="target" min="1" max="100" value="75" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="calculate-button">
+                    Calculate Attendance →
+                </button>
+            </form>
+        </div>
+
+        <div class="advisor-side">
+            <div class="side-card">
+                <div class="side-icon">💡</div>
+                <h3>How it works</h3>
+                <p>
+                    Enter classes present, total classes and your target attendance.
+                    The tool tells you what you can do next.
+                </p>
+            </div>
+
+            <div class="side-card target-card">
+                <div class="side-icon">✓</div>
+                <h3>Recommended Target</h3>
+                <div class="target-number">75%</div>
+                <p>Keeping attendance at or above 75% is a good safety target.</p>
+            </div>
+        </div>
+    </div>
+
+    {% if result %}
+    <div class="result-card">
+
+        <div class="result-header">
+            <div>
+                <span>CALCULATION RESULT</span>
+                <h2>Your Attendance Analysis</h2>
+            </div>
+
+            <div class="result-percentage">{{ current }}%</div>
+        </div>
+
+        <div class="result-grid">
+            <div class="result-box">
+                <div class="result-box-icon">📊</div>
+                <div>
+                    <span>Current Attendance</span>
+                    <strong>{{ current }}%</strong>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <div class="result-box-icon green-result">✓</div>
+                <div>
+                    <span>Classes You Can Miss</span>
+                    <strong>{{ can_miss }}</strong>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <div class="result-box-icon orange-result">↑</div>
+                <div>
+                    <span>Classes To Attend</span>
+                    <strong>{{ required }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-message">
+            {% if current >= target %}
+                <div class="message-icon">✓</div>
+                <div>
+                    <strong>You are above your target!</strong>
+                    <p>{{ result }}</p>
+                </div>
+            {% else %}
+                <div class="message-icon warning">!</div>
+                <div>
+                    <strong>Attendance needs improvement</strong>
+                    <p>{{ result }}</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+.advisor-page { max-width: 1150px; margin: auto; }
+.advisor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.page-label { color: #2563eb; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; }
+.advisor-header h1 { font-size: 30px; color: #111827; margin: 5px 0; }
+.advisor-header p { color: #6b7280; font-size: 13px; }
+.advisor-icon { width: 60px; height: 60px; background: #fff4df; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.advisor-layout { display: grid; grid-template-columns: 1fr 330px; gap: 22px; }
+.calculator-card { background: white; border: 1px solid #e5e7eb; border-radius: 16px; overflow: hidden; }
+.calculator-header { padding: 22px 25px; border-bottom: 1px solid #edf0f3; display: flex; align-items: center; gap: 13px; }
+.calculator-symbol { width: 45px; height: 45px; background: #e5efff; color: #2563eb; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; }
+.calculator-header h2 { font-size: 18px; margin-bottom: 4px; }
+.calculator-header p { color: #6b7280; font-size: 11px; }
+.advisor-form { padding: 25px; }
+.input-group { margin-bottom: 18px; }
+.input-group label { display: block; color: #374151; font-size: 11px; font-weight: 700; margin-bottom: 7px; }
+.input-wrapper { position: relative; }
+.input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px; font-weight: 700; }
+.input-wrapper input { width: 100%; height: 44px; box-sizing: border-box; border: 1px solid #dbe0e7; border-radius: 8px; padding: 0 12px 0 34px; font-size: 12px; outline: none; }
+.input-wrapper input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px #eff6ff; }
+.calculate-button { width: 100%; height: 45px; margin-top: 5px; border: none; border-radius: 9px; background: #2563eb; color: white; font-size: 12px; font-weight: 700; cursor: pointer; }
+.calculate-button:hover { background: #1d4ed8; }
+.advisor-side { display: flex; flex-direction: column; gap: 14px; }
+.side-card { background: white; border: 1px solid #e5e7eb; border-radius: 14px; padding: 20px; }
+.side-icon { width: 38px; height: 38px; background: #eff6ff; border-radius: 9px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.side-card h3 { font-size: 14px; margin-bottom: 7px; }
+.side-card p { color: #6b7280; font-size: 10px; line-height: 1.6; }
+.target-card { background: #f4fbf6; }
+.target-card .side-icon { background: #dcfce7; }
+.target-number { color: #15803d; font-size: 28px; font-weight: 700; margin-bottom: 3px; }
+.result-card { margin-top: 22px; background: white; border: 1px solid #e5e7eb; border-radius: 16px; overflow: hidden; }
+.result-header { padding: 22px 25px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #edf0f3; }
+.result-header span { color: #2563eb; font-size: 9px; font-weight: 700; letter-spacing: 1px; }
+.result-header h2 { font-size: 18px; margin-top: 4px; }
+.result-percentage { font-size: 27px; font-weight: 700; color: #2563eb; }
+.result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 20px 25px; }
+.result-box { border: 1px solid #e5e7eb; border-radius: 11px; padding: 15px; display: flex; align-items: center; gap: 11px; }
+.result-box-icon { width: 38px; height: 38px; background: #eff6ff; border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+.green-result { background: #dcfce7; }
+.orange-result { background: #fff1dc; }
+.result-box span { display: block; color: #6b7280; font-size: 9px; }
+.result-box strong { display: block; color: #111827; font-size: 19px; margin-top: 3px; }
+.result-message { margin: 0 25px 22px; padding: 15px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; gap: 11px; }
+.message-icon { width: 34px; height: 34px; background: #dcfce7; color: #15803d; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.message-icon.warning { background: #fee2e2; color: #dc2626; }
+.result-message strong { font-size: 11px; }
+.result-message p { color: #64748b; font-size: 9px; margin-top: 3px; }
+@media (max-width: 850px) { .advisor-layout { grid-template-columns: 1fr; } .result-grid { grid-template-columns: 1fr; } }
+</style>
+
+{% endblock %}

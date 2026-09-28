@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Attendance Tracker{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">✓</div>
+            <div>
+                <h2>SmartTrack</h2>
+                <p>Attendance System</p>
+            </div>
+        </div>
+
+        <div class="project-box">
+            <span>PYTHON MINI PROJECT</span>
+            <strong>B.Tech CSE • Semester III</strong>
+        </div>
+
+        <nav class="nav">
+            <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <span>⌂</span> Dashboard
+            </a>
+            <a href="{{ url_for('students') }}" class="{% if request.endpoint in ['students','add_student','student_report'] %}active{% endif %}">
+                <span>♙</span> Students
+            </a>
+            <a href="{{ url_for('attendance') }}" class="{% if request.endpoint in ['attendance','generate_qr'] %}active{% endif %}">
+                <span>✓</span> Mark Attendance
+            </a>
+            <a href="{{ url_for('advisor') }}" class="{% if request.endpoint == 'advisor' %}active{% endif %}">
+                <span>◉</span> Attendance Advisor
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <div>
+                    <strong>System Active</strong>
+                    <small>Attendance tracking ready</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div class="breadcrumb">
+                <a href="{{ url_for('dashboard') }}">SmartTrack</a>
+                <span>/</span>
+                <span>{% block breadcrumb %}Dashboard{% endblock %}</span>
+            </div>
+            <div class="top-user">
+                <span class="semester">Semester III</span>
+                <div class="user-avatar">S</div>
+                <div>
+                    <strong>Student</strong>
+                    <small>CSE Department</small>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+</div>
+</body>
+</html>

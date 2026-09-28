@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+
+{% block title %}Student Report | SmartTrack{% endblock %}
+
+{% block breadcrumb %}Students / Student Report{% endblock %}
+
+{% block content %}
+
+
+<div class="report-top">
+
+    <div class="student-profile">
+
+        <div class="large-avatar">
+            {{ student.name[0]|upper }}
+        </div>
+
+        <div>
+
+            <span class="eyebrow">
+                STUDENT REPORT
+            </span>
+
+            <h1>
+                {{ student.name }}
+            </h1>
+
+            <p>
+                Roll No: {{ student.roll }}
+                <br>
+                Gmail: {{ student.email }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('students') }}"
+        class="outline-btn"
+    >
+        ← Back to Students
+    </a>
+
+</div>
+
+
+
+<!-- STATISTICS -->
+
+<div class="stats-grid report-stats">
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon blue">
+            #
+        </div>
+
+        <div>
+
+            <span>
+                Total Classes
+            </span>
+
+            <strong>
+                {{ stats.total }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon green">
+            ✓
+        </div>
+
+        <div>
+
+            <span>
+                Present
+            </span>
+
+            <strong>
+                {{ stats.present }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon orange">
+            ×
+        </div>
+
+        <div>
+
+            <span>
+                Absent
+            </span>
+
+            <strong>
+                {{ stats.absent }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon purple">
+            %
+        </div>
+
+        <div>
+
+            <span>
+                Attendance
+            </span>
+
+            <strong>
+                {{ stats.percentage }}%
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- SUBJECT REPORT -->
+
+<div class="card table-card">
+
+    <div class="card-head">
+
+        <div>
+
+            <h2>
+                Subject-wise Attendance
+            </h2>
+
+            <p>
+                Attendance performance for each subject.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if subjects %}
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>SUBJECT</th>
+
+                    <th>PRESENT</th>
+
+                    <th>TOTAL</th>
+
+                    <th>ATTENDANCE</th>
+
+                    <th>STATUS</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for row in subjects %}
+
+                <tr>
+
+                    <td>
+
+                        <strong>
+                            {{ row.subject }}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+                        {{ row.present }}
+                    </td>
+
+
+                    <td>
+                        {{ row.total }}
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            {{ row.percentage }}%
+                        </strong>
+
+                        <div class="progress">
+
+                            {% if row.percentage >= 100 %}
+
+                                <span class="progress-full"></span>
+
+                            {% elif row.percentage >= 75 %}
+
+                                <span class="progress-good"></span>
+
+                            {% elif row.percentage >= 50 %}
+
+                                <span class="progress-medium"></span>
+
+                            {% else %}
+
+                                <span class="progress-low"></span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        {% if row.percentage >= 75 %}
+
+                            <span class="badge safe">
+                                SAFE
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge risk">
+                                AT RISK
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty small">
+
+        <h3>
+            No attendance recorded yet
+        </h3>
+
+        <p>
+            Subject-wise attendance will appear here
+            after attendance is marked.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+
+<!-- ATTENDANCE HISTORY -->
+
+<div class="card table-card">
+
+    <div class="card-head">
+
+        <div>
+
+            <h2>
+                Attendance History
+            </h2>
+
+            <p>
+                Complete attendance records for this student.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if history %}
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>DATE</th>
+
+                    <th>TIME</th>
+
+                    <th>SUBJECT</th>
+
+                    <th>ROOM</th>
+
+                    <th>STATUS</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for record in history %}
+
+                <tr>
+
+                    <td>
+                        {{ record.date }}
+                    </td>
+
+                    <td>
+                        {{ record.time }}
+                    </td>
+
+                    <td>
+                        {{ record.subject }}
+                    </td>
+
+                    <td>
+                        {{ record.room }}
+                    </td>
+
+                    <td>
+
+                        {% if record.status|lower == "present" %}
+
+                            <span class="badge safe">
+                                PRESENT
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge risk">
+                                ABSENT
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty small">
+
+        <h3>
+            No attendance records
+        </h3>
+
+        <p>
+            Attendance history will appear here.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+{% endblock %}

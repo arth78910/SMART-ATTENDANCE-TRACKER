@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Verification | SmartTrack{% endblock %}
+{% block breadcrumb %}Student Verification{% endblock %}
+
+{% block content %}
+<div class="verification-page">
+    <div class="verification-card card {% if allowed %}success-card{% else %}error-card{% endif %}">
+        <div class="result-icon">{{ '✓' if allowed else '!' }}</div>
+        <span class="eyebrow">SMART ATTENDANCE TRACKER</span>
+        <h1>{{ title }}</h1>
+        <p class="result-message">{{ message }}</p>
+
+        {% if allowed and student %}
+        <div class="verified-student">
+            <div class="mini-avatar">{{ student.name[0]|upper }}</div>
+            <div><strong>{{ student.name }}</strong><small>{{ student.roll }} • {{ student.email }}</small></div>
+        </div>
+        {% endif %}
+
+        {% if not allowed %}
+        <div class="security-note">Your attendance is not marked until all required verification checks are passed.</div>
+        {% endif %}
+
+        <a class="outline-btn" href="{{ url_for('dashboard') }}">Back to SmartTrack</a>
+    </div>
+</div>
+{% endblock %}

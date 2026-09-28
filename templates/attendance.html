@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Mark Attendance | SmartTrack{% endblock %}
+{% block breadcrumb %}Mark Attendance{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">SECURE CLASSROOM ATTENDANCE</span>
+        <h1>Generate Attendance QR</h1>
+        <p>Teacher creates a temporary QR. Students scan it from the same classroom Wi-Fi.</p>
+    </div>
+</div>
+
+{% if active_class %}
+<div class="live-banner">
+    <div>
+        <span class="live-pill">● ACTIVE</span>
+        <h3>{{ active_class.subject }} • {{ active_class.room }}</h3>
+        <p>Created {{ active_class.created_at }} • Expires {{ active_class.expires_at }}</p>
+    </div>
+    <a class="primary-btn" href="{{ url_for('generate_qr') }}">Create New QR</a>
+</div>
+{% endif %}
+
+<div class="two-column">
+    <div class="card form-card">
+        <div class="form-title"><div class="form-icon green">✓</div><div><h2>Class Details</h2><p>Enter details once and generate the QR.</p></div></div>
+        <form method="post" action="{{ url_for('generate_qr') }}" class="stack-form">
+            <label>Subject<input type="text" name="subject" placeholder="e.g. Python Programming" required></label>
+            <label>Classroom / Room<input type="text" name="room" placeholder="e.g. Lab 3" required></label>
+            <label>QR Valid For
+                <select name="duration">
+                    <option value="5">5 minutes</option>
+                    <option value="10" selected>10 minutes</option>
+                    <option value="15">15 minutes</option>
+                    <option value="30">30 minutes</option>
+                    <option value="60">60 minutes</option>
+                </select>
+            </label>
+            <button class="primary-btn full-btn" type="submit">Generate Secure QR</button>
+        </form>
+    </div>
+
+    <div class="card feature-card">
+        <span class="eyebrow">HOW IT WORKS</span>
+        <h2>Three security checks</h2>
+        <div class="feature-list">
+            <div><span>01</span><p><strong>Same Wi-Fi</strong><small>Phone must be on the teacher's LAN.</small></p></div>
+            <div><span>02</span><p><strong>Google identity</strong><small>System reads the signed-in Gmail automatically.</small></p></div>
+            <div><span>03</span><p><strong>One-time session</strong><small>The same student cannot mark the same QR twice.</small></p></div>
+        </div>
+        <div class="network-box"><small>Teacher LAN address</small><strong>{{ local_ip }}:5000</strong></div>
+    </div>
+</div>
+
+<div class="card note-card">
+    <strong>Important:</strong> The phone must be connected to the same Wi-Fi network and the teacher's computer firewall must allow Python/port 5000 on the private network.
+</div>
+{% endblock %}

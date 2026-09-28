@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | SmartTrack{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">PYTHON MINI PROJECT</span>
+        <h1>Attendance Dashboard</h1>
+        <p>Monitor student attendance and classroom activity in one place.</p>
+    </div>
+    <a class="primary-btn" href="{{ url_for('attendance') }}">✓ Start Attendance</a>
+</div>
+
+{% if active_class %}
+<div class="live-banner">
+    <div>
+        <span class="live-pill">● LIVE SESSION</span>
+        <h3>{{ active_class.subject }} • {{ active_class.room }}</h3>
+        <p>QR attendance is currently active until {{ active_class.expires_at }}.</p>
+    </div>
+    <a class="outline-btn" href="{{ url_for('attendance') }}">Open Session</a>
+</div>
+{% endif %}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue">♙</div>
+        <div><span>Total Students</span><strong>{{ total_students }}</strong></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple">▥</div>
+        <div><span>Average Attendance</span><strong>{{ average_attendance }}%</strong></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">✓</div>
+        <div><span>Safe Students</span><strong>{{ safe_students }}</strong></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon orange">!</div>
+        <div><span>Students at Risk</span><strong>{{ at_risk }}</strong></div>
+    </div>
+</div>
+
+<div class="card table-card">
+    <div class="card-head">
+        <div>
+            <h2>Student Attendance</h2>
+            <p>Current attendance status of registered students.</p>
+        </div>
+        <a href="{{ url_for('students') }}" class="text-btn">View all →</a>
+    </div>
+
+    {% if students %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>STUDENT</th>
+                    <th>ROLL NO.</th>
+                    <th>ATTENDANCE</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>
+                        <div class="student-cell">
+                            <div class="mini-avatar">{{ student.name[0]|upper }}</div>
+                            <div><strong>{{ student.name }}</strong><small>{{ student.email }}</small></div>
+                        </div>
+                    </td>
+                    <td>{{ student.roll }}</td>
+                    <td>
+                        <div class="attendance-value">{{ student.percentage }}%</div>
+                        <div class="progress"><span style="width: {{ [student.percentage, 100]|min }}%"></span></div>
+                    </td>
+                    <td>
+                        <span class="badge {{ 'safe' if student.percentage >= 75 else 'risk' }}">
+                            ● {{ 'Safe' if student.percentage >= 75 else 'At Risk' }}
+                        </span>
+                    </td>
+                    <td><a class="view-link" href="{{ url_for('student_report', student_id=student.id) }}">View →</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty">
+        <div class="empty-icon">♙</div>
+        <h3>No students yet</h3>
+        <p>Add students with their assigned Gmail addresses to start.</p>
+        <a class="primary-btn" href="{{ url_for('add_student') }}">+ Add Student</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="quick-grid">
+    <a class="quick-card" href="{{ url_for('add_student') }}">
+        <span class="quick-icon blue">+</span>
+        <div><strong>Add Student</strong><small>Assign roll number and Gmail</small></div>
+        <b>→</b>
+    </a>
+    <a class="quick-card" href="{{ url_for('attendance') }}">
+        <span class="quick-icon green">✓</span>
+        <div><strong>Generate QR</strong><small>Create a secure class session</small></div>
+        <b>→</b>
+    </a>
+    <a class="quick-card" href="{{ url_for('advisor') }}">
+        <span class="quick-icon purple">◉</span>
+        <div><strong>Attendance Advisor</strong><small>Calculate safe / required classes</small></div>
+        <b>→</b>
+    </a>
+</div>
+{% endblock %}

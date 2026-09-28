@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}QR Session | SmartTrack{% endblock %}
+{% block breadcrumb %}Mark Attendance / QR Session{% endblock %}
+
+{% block content %}
+<div class="qr-page">
+    <div class="qr-header">
+        <span class="live-pill">● ATTENDANCE LIVE</span>
+        <h1>{{ active_class.subject }}</h1>
+        <p>{{ active_class.room }} • Valid until {{ active_class.expires_at }}</p>
+    </div>
+
+    <div class="qr-card card">
+        <div class="qr-image-wrap">
+            <img src="{{ url_for('static', filename='qr/attendance_qr.png') }}" alt="Attendance QR Code">
+        </div>
+        <h2>Scan to mark attendance</h2>
+        <p>Students should scan this QR while connected to the classroom Wi-Fi.</p>
+        <div class="qr-url">{{ scan_url }}</div>
+
+        <div class="security-row">
+            <span>✓ Same network</span>
+            <span>✓ Google verified</span>
+            <span>✓ One time only</span>
+        </div>
+
+        <form method="post" action="{{ url_for('close_class') }}">
+            <button class="outline-btn danger-wide" type="submit">Close Attendance Session</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

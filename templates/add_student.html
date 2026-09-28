@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Add Student | SmartTrack{% endblock %}
+{% block breadcrumb %}Students / Add Student{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div><span class="eyebrow">STUDENT MANAGEMENT</span><h1>Add Student</h1><p>Assign one Gmail account to one student.</p></div>
+</div>
+
+<div class="form-card card">
+    <div class="form-title"><div class="form-icon">♙</div><div><h2>Student Details</h2><p>This Gmail will be used for automatic identity verification.</p></div></div>
+    <form method="post" class="form-grid">
+        <label>Student Name<input type="text" name="name" placeholder="e.g. Rahul Sharma" required></label>
+        <label>Roll Number<input type="text" name="roll" placeholder="e.g. 23CSE101" required></label>
+        <label class="full">Student Gmail<input type="email" name="email" placeholder="student@gmail.com" required></label>
+        <div class="full security-note">🔐 Students cannot enter a different email during attendance. The signed-in Google account is checked against this registered Gmail.</div>
+        <div class="form-actions full"><a class="outline-btn" href="{{ url_for('students') }}">Cancel</a><button class="primary-btn" type="submit">Save Student</button></div>
+    </form>
+</div>
+{% endblock %}

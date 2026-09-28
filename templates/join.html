@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block heading %}Student Verification{% endblock %}
+
+{% block content %}
+
+<div class="join-page">
+
+    {% if active_session and network_ok %}
+
+    <div class="join-card">
+
+        <div class="success-icon">✓</div>
+
+        <div class="join-label">SMART ATTENDANCE TRACKER</div>
+
+        <h1>Verify Attendance</h1>
+
+        <p class="subtitle">
+            Your device is connected to the classroom network.
+        </p>
+
+        <div class="class-card">
+            <span>ATTENDANCE FOR</span>
+            <strong>{{ active_session.subject }}</strong>
+            <small>
+                {{ active_session.date }}
+                {% if active_session.period %} • {{ active_session.period }}{% endif %}
+            </small>
+        </div>
+
+        {% if error %}
+            <div class="message error">⚠ {{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+            <div class="message success">✓ {{ success }}</div>
+        {% endif %}
+
+        {% if not success %}
+
+            {% if google_client_id and google_client_id != "PASTE_YOUR_GOOGLE_CLIENT_ID_HERE" %}
+
+            <p class="login-title">
+                Continue with your registered Google account
+            </p>
+
+            <div
+                id="g_id_onload"
+                data-client_id="{{ google_client_id }}"
+                data-callback="handleGoogleResponse"
+                data-auto_prompt="false">
+            </div>
+
+            <div
+                class="g_id_signin"
+                data-type="standard"
+                data-size="large"
+                data-theme="outline"
+                data-text="signin_with"
+                data-shape="rectangular"
+                data-logo_alignment="left">
+            </div>
+
+            <form id="google-form" method="POST" action="{{ url_for('google_check_in') }}">
+                <input type="hidden" name="session_id" value="{{ session_id }}">
+                <input type="hidden" name="credential" id="credential-input">
+            </form>
+
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+            <script>
+                function handleGoogleResponse(response) {
+                    document.getElementById("credential-input").value = response.credential;
+                    document.getElementById("google-form").submit();
+                }
+            </script>
+
+            {% else %}
+
+            <div class="message error">
+                Google Sign-In is not configured yet. The teacher must add the Google Client ID to the project first.
+            </div>
+
+            {% endif %}
+
+        {% endif %}
+
+        <div class="verification-box">
+            <div class="verification-item">
+                <span class="check">✓</span>
+                <div>
+                    <strong>Same network verified</strong>
+                    <small>Connected to the teacher's network</small>
+                </div>
+            </div>
+
+            <div class="verification-item">
+                <span class="check">✓</span>
+                <div>
+                    <strong>Google account verification</strong>
+                    <small>Only teacher-registered Gmail IDs are accepted</small>
+                </div>
+            </div>
+
+            <div class="verification-item">
+                <span class="check">✓</span>
+                <div>
+                    <strong>One-time attendance</strong>
+                    <small>One student can submit only once for this class</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="join-card blocked">
+
+        <div class="blocked-icon">!</div>
+
+        <div class="join-label">SMART ATTENDANCE TRACKER</div>
+
+        <h1>Attendance Not Available</h1>
+
+        {% if error %}
+            <div class="message error">⚠ {{ error }}</div>
+        {% endif %}
+
+        <p class="subtitle">
+            Scan the QR code provided by your teacher while connected to the classroom Wi-Fi.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<style>
+.join-page{max-width:520px;margin:45px auto}.join-card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:30px;box-shadow:0 5px 20px rgba(15,23,42,.05);text-align:center}.success-icon,.blocked-icon{width:55px;height:55px;margin:0 auto 14px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700}.success-icon{background:#dcfce7;color:#15803d}.blocked-icon{background:#fee2e2;color:#dc2626}.join-label{color:#2563eb;font-size:9px;font-weight:700;letter-spacing:1px}.join-card h1{color:#172554;font-size:27px;margin:7px 0}.subtitle{color:#64748b;font-size:12px;line-height:1.5;margin:0 0 19px}.class-card{background:#eff6ff;border:1px solid #dbeafe;border-radius:11px;padding:14px;margin-bottom:17px}.class-card span{display:block;color:#2563eb;font-size:8px;font-weight:700;letter-spacing:1px}.class-card strong{display:block;color:#172554;font-size:16px;margin:5px 0}.class-card small{color:#64748b;font-size:9px}.message{text-align:left;padding:11px;border-radius:9px;font-size:10px;margin:12px 0}.message.error{background:#fff1f2;color:#be123c}.message.success{background:#f0fdf4;color:#15803d}.login-title{color:#334155;font-size:11px;font-weight:700;margin:20px 0 10px}.g_id_signin{display:flex;justify-content:center}.verification-box{margin-top:20px;background:#f8fafc;border-radius:11px;padding:13px;text-align:left}.verification-item{display:flex;gap:9px;align-items:center;padding:8px 0}.verification-item+.verification-item{border-top:1px solid #e5e7eb}.check{width:24px;height:24px;min-width:24px;border-radius:7px;background:#dcfce7;color:#15803d;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}.verification-item strong{display:block;color:#334155;font-size:10px}.verification-item small{display:block;color:#94a3b8;font-size:8px;margin-top:3px}.blocked{padding:40px 30px}
+</style>
+
+{% endblock %}
